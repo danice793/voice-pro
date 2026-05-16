@@ -3,7 +3,7 @@ from app.abus_path import *
 from app.abus_genuine import *
 from app.abus_files import *
 from app.abus_ffmpeg import *
-from app.abus_tts_cosyvoice import *
+# from app.abus_tts_cosyvoice import *
 from app.abus_voice_celeb import *
 
 import gradio as gr
