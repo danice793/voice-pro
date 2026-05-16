@@ -18,7 +18,7 @@ i18n = I18nAuto()
 from app.gradio_gulliver import *
 from app.gradio_voice_celeb import *
 from app.gradio_voice_ms import *
-from app.gradio_voice_kokoro import *
+# from app.gradio_voice_kokoro import *
 
 
 def gulliver_tab(user_config: UserConfig):
@@ -28,8 +28,8 @@ def gulliver_tab(user_config: UserConfig):
     ms_voice.selected_language = user_config.get("ms_language", "English")
     
     f5_reference_voice = GradioCelebVoice(user_config)
-    cosy_reference_voice = GradioCelebVoice(user_config)
-    kokoro_voice = GradioKokoroVoice(user_config)    
+    # cosy_reference_voice = GradioCelebVoice(user_config)
+    # kokoro_voice = GradioKokoroVoice(user_config)    
     
     system = platform.system()
     
@@ -123,34 +123,7 @@ def gulliver_tab(user_config: UserConfig):
                     f5_dubbing_button = gr.Button(value=i18n("Synthesis"), variant="primary")  
                                     
                     
-            with gr.Tab(i18n('CosyVoice')):          
-                with gr.Group():                            
-                    cosy_language_radio = gr.Radio(choices=cosy_reference_voice.gradio_languages(), label=i18n("Language"), value="English")
-                    cosy_voice_dropdown = gr.Dropdown(label=i18n("Voice"), choices=cosy_reference_voice.gradio_voices(), value=None)                                                    
-                    cosy_reference_audio = gr.Audio(label="Reference Audio", sources=['upload', 'microphone'], type="filepath", interactive=True)
-                    cosy_reference_transcript = gr.Textbox(label=i18n("Transcript"), interactive=True, max_lines=12, lines=6,
-                                                placeholder=i18n("Required"))
-                    cosy_reference_image = gr.Image(label="Photo", type="filepath", interactive=False, show_download_button=False)   
-
-                    cosy_mode_choice = gr.Radio(choices=["Zero-Shot", "Cross-Lingual", "Instruct"], label="Inference Mode", value="Zero-Shot")
-                    cosy_tts_speed = gr.Slider(0.3, 2.0, value=1.0, step = 0.1, label=i18n("Speech rate"), info="0.3 ~ 2.0")
-                with gr.Row():
-                    cosy_default_button = gr.ClearButton(value=i18n("Load Defaults")) 
-                    cosy_dubbing_button = gr.Button(value=i18n("Synthesis"), variant="primary")  
-                    
-                    
-            with gr.Tab(i18n('kokoro')):          
-                with gr.Group():   
-                    kokoro_language_dropdown = gr.Dropdown(label=i18n("Language"), choices=kokoro_voice.gradio_languages(), value=kokoro_voice.selected_language)
-                    kokoro_voice_dropdown = gr.Dropdown(label=i18n("Voice"), choices=kokoro_voice.gradio_voices(), value=user_config.get("kokoro_voice", "🚺 Heart ❤️"))
-                    kokoro_sample_audio = gr.Audio(label="Sample Audio", type="filepath", 
-                                            editable=False, interactive=False, show_download_button=False)
-                    kokoro_transcript = gr.Textbox(label=i18n("Transcript"), interactive=False, max_lines=6, lines=3,
-                                              placeholder=i18n("Optional"))    
-                    kokoro_tts_speed = gr.Slider(0.3, 2.0, value=1.0, step = 0.1, label=i18n("Speech rate"), info="0.3 ~ 2.0")                    
-                with gr.Row():
-                    kokoro_default_button = gr.ClearButton(value=i18n("Load Defaults")) 
-                    kokoro_dubbing_button = gr.Button(value=i18n("Synthesis"), variant="primary")                          
+            # CosyVoice and Kokoro tabs removed for Colab optimization
                     
                 
     # Media Upload                        
@@ -226,41 +199,5 @@ def gulliver_tab(user_config: UserConfig):
             outputs=[dubbing_video, dubbing_audio, dubbing_files])     
     
 
-    # CosyVoice     
-    cosy_language_radio.change(cosy_reference_voice.gradio_change_language,
-                                inputs=[cosy_language_radio],
-                                outputs=[cosy_voice_dropdown])        
-    
-    cosy_voice_dropdown.change(cosy_reference_voice.gradio_change_voice,
-                        inputs=[cosy_voice_dropdown],
-                        outputs=[cosy_reference_audio, cosy_reference_transcript, cosy_reference_image])
-    cosy_reference_audio.clear(cosy_reference_voice.gradio_clear_voice,
-                      inputs=None,
-                      outputs=[cosy_reference_transcript, cosy_reference_image])    
-    
-    cosy_default_button.click(gulliver.gradio_cosy_default,
-                    outputs=[cosy_mode_choice, cosy_tts_speed])         
-    
-    cosy_dubbing_button.click(gulliver.gradio_cosy_dubbing, 
-                inputs=[
-                        translation_textbox, 
-                        cosy_voice_dropdown, cosy_reference_audio, cosy_reference_transcript, 
-                        cosy_mode_choice, cosy_tts_speed, audio_format_radio], 
-                outputs=[dubbing_video, dubbing_audio, dubbing_files])     
-    
-    
-    # kokoro
-    kokoro_language_dropdown.change(kokoro_voice.gradio_change_language,
-                            inputs=[kokoro_language_dropdown],
-                            outputs=[kokoro_voice_dropdown])
-    
-    kokoro_voice_dropdown.change(kokoro_voice.gradio_change_voice,
-                            inputs=[kokoro_voice_dropdown],
-                            outputs=[kokoro_sample_audio, kokoro_transcript])   
-    
-    kokoro_default_button.click(gulliver.gradio_kokoro_default,
-                    outputs=[kokoro_tts_speed, audio_format_radio])
-
-    kokoro_dubbing_button.click(gulliver.gradio_kokoro_dubbing, 
-                inputs=[translation_textbox, kokoro_language_dropdown, kokoro_voice_dropdown, kokoro_tts_speed, audio_format_radio], 
-                outputs=[dubbing_video, dubbing_audio, dubbing_files])                     
+    # CosyVoice handlers removed
+    # kokoro handlers removed

@@ -12,9 +12,9 @@ from app.abus_files import *
 
 from app.abus_asr_parameters import *
 from app.abus_asr_faster_whisper import *
-from app.abus_asr_whisper import *
-from app.abus_asr_whisper_timestamped import *
-from app.abus_asr_whisperx import *
+# from app.abus_asr_whisper import *
+# from app.abus_asr_whisper_timestamped import *
+# from app.abus_asr_whisperx import *
 
 from app.abus_translate_deep import *
 from app.abus_translate_azure import *
@@ -26,8 +26,8 @@ from app.abus_voice_kokoro import *
 from app.abus_tts_azure import *
 from app.abus_tts_edge import *
 from app.abus_tts_f5 import *
-from app.abus_tts_cosyvoice import *
-from app.abus_tts_kokoro import *
+# from app.abus_tts_cosyvoice import *
+# from app.abus_tts_kokoro import *
 
 
 import src.ui as ui
@@ -49,10 +49,10 @@ class GradioGulliver:
         self.edge_tts = AzureTTS() if azure_text_api_working() else EdgeTTS()
         
         self.f5_tts = F5TTS()
-        self.cosy_tts = CosyVoiceInference()
+        # self.cosy_tts = CosyVoiceInference()
         
-        self.kokoro_tts = KokoroTTS()
-        self.kokoro_vm = KokoroVoiceManager()
+        # self.kokoro_tts = KokoroTTS()
+        # self.kokoro_vm = KokoroVoiceManager()
 
         self.translator = AzureTranslator() if azure_text_api_working() == True else DeepTranslator()
         
@@ -66,10 +66,7 @@ class GradioGulliver:
 
     def switch_case(self, case):
         switch_dict = {
-            'faster-whisper': lambda: FasterWhisperInference(),
-            'whisper': lambda: WhisperInference(),
-            'whisper-timestamped': lambda: WhisperTimestampedInference(),
-            'whisperX': lambda: WhisperXInference()
+            'faster-whisper': lambda: FasterWhisperInference()
         }
         return switch_dict.get(case, lambda: FasterWhisperInference())()    
             
@@ -82,7 +79,7 @@ class GradioGulliver:
     
     
     def get_asr_engines(self):
-        return ['faster-whisper', 'whisper', 'whisper-timestamped', 'whisperX']
+        return ['faster-whisper']
     
     def update_whisper_models(self, asr_engine):
         whisper_inf = self.switch_case(asr_engine)       

@@ -268,7 +268,7 @@ class OneClick():
         # omegaconf 를 시작으로 fairseq 0.12.2, hydra-core 1.0.7  설치 문제가 발생하기 때문에
         # pip 버전을 24.0 으로 설정함.
         # oc_run_cmd("python -m pip install pip==24.0", assert_success=True, environment=True)    
-        cls.oc_run_cmd("python -m pip install pip==25.0", assert_success=True, environment=True)
+        cls.oc_run_cmd("python -m pip install pip==24.0", assert_success=True, environment=True)
         
         # conda package
         cls.install_conda_packages(app_name, selected_gpu)
@@ -312,6 +312,11 @@ class OneClick():
         cmd = f"python -m pip install -r {requirements_file}"
         cmd = cmd + " --upgrade" if is_update else cmd
         cls.oc_run_cmd(cmd, assert_success=True, environment=True)
+        
+        # Colab patches
+        cls.oc_print_big_message("Applying Colab specific patches (setuptools, cudnn8)")
+        cls.oc_run_cmd("python -m pip install setuptools==69.5.1", environment=True)
+        cls.oc_run_cmd("python -m pip install nvidia-cudnn-cu11==8.9.4.25", environment=True)
         
         # Install PyTorch via pip for non-macOS systems (CPU builds)
         # On macOS, PyTorch is installed via conda in install_conda_packages
