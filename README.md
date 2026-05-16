@@ -44,7 +44,10 @@ Chỉ với 1 ô lệnh (Code Cell) duy nhất trên Google Colab (Nhớ chọn 
 # 2. Di chuyển vào thư mục dự án
 %cd voice-pro
 
-# 3. Chạy phần mềm
+# 3. Đổi biến môi trường matplotlib về agg để tắt tính năng vẽ đồ thị inline của Colab
+%env MPLBACKEND=agg
+
+# 4. Chạy phần mềm
 !bash start.sh
 ```
 
