@@ -89,6 +89,9 @@ class CelebVoiceManager():
                         
     
     def voice_names(self, language = "English"):
+        if language not in self.celebrities:
+            return []
+        
         results = []       
         celebrities = self.celebrities[language]
 
@@ -106,6 +109,7 @@ class CelebVoiceManager():
         return None
     
     def languages(self):
-        languages = self.celebrities.keys()
-        # emoji_languages = ["chinese", "english", "korean", "japanese"]
+        languages = list(self.celebrities.keys())
+        if not languages:
+            languages = ["English", "Vietnamese"]
         return languages
