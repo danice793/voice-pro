@@ -9,9 +9,9 @@ from app.abus_genuine import *
 from app.abus_files import *
 
 from app.abus_asr_faster_whisper import *
-from app.abus_asr_whisper import *
-from app.abus_asr_whisper_timestamped import *
-from app.abus_asr_whisperx import *
+# from app.abus_asr_whisper import *
+# from app.abus_asr_whisper_timestamped import *
+# from app.abus_asr_whisperx import *
 
 from src.i18n.i18n import I18nAuto
 i18n = I18nAuto()
@@ -35,9 +35,9 @@ class GradioASR:
     def switch_case(self, case):
         switch_dict = {
             'faster-whisper': lambda: FasterWhisperInference(),
-            'whisper': lambda: WhisperInference(),
-            'whisper-timestamped': lambda: WhisperTimestampedInference(),
-            'whisperX': lambda: WhisperXInference()            
+            # 'whisper': lambda: WhisperInference(),
+            # 'whisper-timestamped': lambda: WhisperTimestampedInference(),
+            # 'whisperX': lambda: WhisperXInference()            
         }
         return switch_dict.get(case, lambda: FasterWhisperInference())()    
     
@@ -53,7 +53,7 @@ class GradioASR:
     #     cmd_open_explorer(self.mdxnet_models_dir)
         
     def get_asr_engines(self):
-        return ['faster-whisper', 'whisper', 'whisper-timestamped', 'whisperX']        
+        return ['faster-whisper'] #, 'whisper', 'whisper-timestamped', 'whisperX']        
     
     def update_whisper_models(self, asr_engine):
         whisper_inf = self.switch_case(asr_engine)       

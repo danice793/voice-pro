@@ -11,9 +11,9 @@ from app.abus_files import *
 from app.abus_hf import AbusHuggingFace
 
 from app.abus_asr_faster_whisper import *
-from app.abus_asr_whisper import *
-from app.abus_asr_whisper_timestamped import *
-from app.abus_asr_whisperx import *
+# from app.abus_asr_whisper import *
+# from app.abus_asr_whisper_timestamped import *
+# from app.abus_asr_whisperx import *
 
 import src.ui as ui
 from src.i18n.i18n import I18nAuto
@@ -38,9 +38,9 @@ class GradioKara:
     def switch_case(self, case):
         switch_dict = {
             'faster-whisper': lambda: FasterWhisperInference(),
-            'whisper': lambda: WhisperInference(),
-            'whisper-timestamped': lambda: WhisperTimestampedInference(),
-            'whisperX': lambda: WhisperXInference()
+            # 'whisper': lambda: WhisperInference(),
+            # 'whisper-timestamped': lambda: WhisperTimestampedInference(),
+            # 'whisperX': lambda: WhisperXInference()
         }
         return switch_dict.get(case, lambda: FasterWhisperInference())()    
 
@@ -56,7 +56,7 @@ class GradioKara:
 
 
     def get_asr_engines(self):
-        return ['faster-whisper', 'whisper', 'whisper-timestamped', 'whisperX']
+        return ['faster-whisper'] #, 'whisper', 'whisper-timestamped', 'whisperX']
 
     def update_whisper_models(self, asr_engine):
         whisper_inf = self.switch_case(asr_engine)       
