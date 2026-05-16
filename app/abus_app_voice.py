@@ -121,7 +121,7 @@ def create_ui(user_config: UserConfig):
             inbrowser=True
         )
     elif system == "Linux" or system == "Darwin":  # Linux or macOS
-        gradio_interface.launch()
+        gradio_interface.launch(share=True)
     else:
         print(f"Unsupported systems: {system}")
 

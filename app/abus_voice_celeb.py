@@ -85,7 +85,7 @@ class CelebVoiceManager():
                         self.celebrities[language].append(celebrity)
         
         except Exception as e:
-            logger.error(f"[abus_voice_celeb.py] _load_from_json - Error: {e}")
+            logger.debug(f"[abus_voice_celeb.py] _load_from_json - Not found (Expected): {e}")
                         
     
     def voice_names(self, language = "English"):
