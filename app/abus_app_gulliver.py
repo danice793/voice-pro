@@ -4,6 +4,8 @@ from pathlib import Path
 import random
 import requests
 
+import matplotlib
+matplotlib.use("Agg")
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
