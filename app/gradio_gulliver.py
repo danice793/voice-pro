@@ -18,6 +18,7 @@ from app.abus_asr_faster_whisper import *
 
 from app.abus_translate_deep import *
 from app.abus_translate_azure import *
+from app.abus_translate_llm import QwenTranslator
 
 from app.abus_voice_ms import *
 from app.abus_voice_celeb import *
@@ -54,8 +55,10 @@ class GradioGulliver:
         # self.kokoro_tts = KokoroTTS()
         # self.kokoro_vm = KokoroVoiceManager()
 
-        self.translator = AzureTranslator() if azure_text_api_working() == True else DeepTranslator()
-        
+        self.translator_azure = AzureTranslator() if azure_text_api_working() == True else None
+        self.translator_deep = DeepTranslator()
+        self.translator_qwen = QwenTranslator()
+        self.translator = self.translator_deep # default for get_languages
         asr_engine = self.user_config.get("asr_engine", 'faster-whisper')
         self.whisper_inf = self.switch_case(asr_engine)   
 
@@ -239,7 +242,7 @@ class GradioGulliver:
                                         
     
     def gradio_translate(self,
-                        source_lang, transcription_text, target_lang):
+                        translator_engine, source_lang, transcription_text, target_lang):
         if len(transcription_text) < 1:
             logger.warning(f"[gradio_gulliver.py] gradio_translate - no actions")
             return None, None, None, self.fm.get_all_files() 
@@ -253,12 +256,19 @@ class GradioGulliver:
             transcription_file = os.path.join(path_translate_folder(), path_new_filename(f".{subs.format}"))
             subs.save(transcription_file)
 
+        if translator_engine == "Qwen LLM (Local)":
+            active_translator = self.translator_qwen
+        elif translator_engine == "Azure" and self.translator_azure:
+            active_translator = self.translator_azure
+        else:
+            active_translator = self.translator_deep
+
         translation_file = None
         translation_text = None
         if transcription_file:
-            translation_file = self._translate_subtitle(transcription_file, source_lang, target_lang)
+            translation_file = self._translate_subtitle(transcription_file, source_lang, target_lang, active_translator)
         else:
-            translation_text = self._translate_text(transcription_text, source_lang, target_lang)
+            translation_text = self._translate_text(transcription_text, source_lang, target_lang, active_translator)
 
         source_video_file = self.fm.get_split("Source.video")
         source_audio_file = self.fm.get_split("Source.audio")
@@ -280,12 +290,12 @@ class GradioGulliver:
             return "Error: Unable to read the file."
         
         
-    def _translate_subtitle(self, subtitle_file, source_lang, target_lang):
+    def _translate_subtitle(self, subtitle_file, source_lang, target_lang, active_translator):
         try:
             translation_file = path_add_postfix(subtitle_file, f"_{target_lang}")
-            self.translator.translate_file(source_lang, target_lang, subtitle_file, translation_file)
+            active_translator.translate_file(source_lang, target_lang, subtitle_file, translation_file)
             
-            target_lang_code = self.translator.get_language_code(target_lang)
+            target_lang_code = active_translator.get_language_code(target_lang)
             self.fm.set_translation(target_lang_code, translation_file)            
             return translation_file
         except Exception as e:
@@ -293,9 +303,9 @@ class GradioGulliver:
             gr.Warning(f'{e}')
             return None           
 
-    def _translate_text(self, text, source_lang, target_lang):
+    def _translate_text(self, text, source_lang, target_lang, active_translator):
         try:
-            translated = self.translator.translate_text(source_lang, target_lang, text)
+            translated = active_translator.translate_text(source_lang, target_lang, text)
             return translated   
         except Exception as e:
             logger.error(f"[gradio_gulliver.py] _translate_text - error: {e}")

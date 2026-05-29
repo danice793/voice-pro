@@ -512,3 +512,48 @@ def ffmpeg_compress_video(
     except Exception as e:
         logger.error(f"[abus:ffmpeg_compress_video] - Error occurred: {e}")
         return False   
+
+def ffmpeg_atempo_stretch(input_path: str, output_path: str, ratio: float):
+    if not os.path.exists(input_path):
+        logger.error(f'[abus:ffmpeg_atempo_stretch] Input file not found: {input_path}')
+        return False
+        
+    input_path_encoded = input_path.encode('utf-8')
+    output_path_encoded = output_path.encode('utf-8')
+
+    # atempo filter only supports 0.5 to 2.0. If ratio is outside, chain them.
+    filters = []
+    current_ratio = ratio
+    while current_ratio > 2.0:
+        filters.append("atempo=2.0")
+        current_ratio /= 2.0
+    while current_ratio < 0.5:
+        filters.append("atempo=0.5")
+        current_ratio /= 0.5
+    if current_ratio != 1.0:
+        filters.append(f"atempo={current_ratio}")
+        
+    filter_str = ",".join(filters)
+    
+    command = [
+        'ffmpeg',
+        '-y',
+        '-i', input_path_encoded,
+        '-filter:a', filter_str,
+        output_path_encoded
+    ]
+    logger.debug(f'[abus:ffmpeg_atempo_stretch] command = {command}')
+    
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            check=True
+        )
+        return True
+    except Exception as e:
+        logger.error(f"[abus:ffmpeg_atempo_stretch] - Error occurred: {e}")
+        return False
+

@@ -202,16 +202,24 @@ class F5TTS:
                     silence = AudioSegment.silent(duration=next_line.start-line.start)
                     combined_audio += silence
                 continue        
+            tts_segment = AudioSegment.from_file(tts_segment_file)
+            T_tts = len(tts_segment)
+            T_original = line.end - line.start
             
-            combined_audio += AudioSegment.from_file(tts_segment_file)
+            if T_original > 0 and abs(T_tts - T_original) > 50:
+                speed_factor = T_tts / T_original
+                logger.debug(f"[abus_tts_f5.py] Aligning audio: ratio={speed_factor:.2f}")
+                aligned_segment_file = path_add_postfix(tts_segment_file, "_aligned")
+                if ffmpeg_atempo_stretch(tts_segment_file, aligned_segment_file, speed_factor):
+                    tts_segment = AudioSegment.from_file(aligned_segment_file)
+                    cmd_delete_file(aligned_segment_file)
+            
+            combined_audio += tts_segment
 
             if next_line and len(combined_audio) < next_line.start:
                 silence_length = next_line.start - len(combined_audio)
                 silence = AudioSegment.silent(duration=silence_length)
                 combined_audio += silence
-            elif next_line:
-                next_line.start = len(combined_audio)
-                next_line.end = next_line.start + (next_line.end - next_line.start)
                 
         combined_audio.export(output_file, format=audio_format)         
         cmd_delete_file(tts_subtitle_file)    

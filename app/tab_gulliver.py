@@ -85,6 +85,7 @@ def gulliver_tab(user_config: UserConfig):
         with gr.Column(scale=3):
             with gr.Group():
                 gr.HTML(f'<center><h4>{i18n("Translation")}</h4></center>')
+                translator_engine_radio = gr.Radio(label=i18n("Translator Engine"), choices=["Google Translator", "Azure", "Qwen LLM (Local)"], value=user_config.get("translator_engine", "Qwen LLM (Local)"))
                 source_language_dropdown = gr.Dropdown(label=i18n("Source Language"), choices=gulliver.gradio_translate_languages(), value=user_config.get("translate_source_language", "English"))
                 translate_language_dropdown = gr.Dropdown(label=i18n("Translated Language"), choices=gulliver.gradio_translate_languages(), value=user_config.get("translate_target_language", "English"))
             with gr.Row():
@@ -153,7 +154,7 @@ def gulliver_tab(user_config: UserConfig):
                              inputs=[transcription_textbox],
                              outputs=[source_language_dropdown])
     translate_button.click(gulliver.gradio_translate,
-                              inputs=[source_language_dropdown, transcription_textbox, translate_language_dropdown],
+                              inputs=[translator_engine_radio, source_language_dropdown, transcription_textbox, translate_language_dropdown],
                               outputs=[dubbing_video, dubbing_audio, translation_textbox, dubbing_files])
 
    
