@@ -13,7 +13,7 @@ import structlog
 logger = structlog.get_logger()
 
 class QwenTranslator:
-    def __init__(self, model_id="Qwen/Qwen2.5-3B-Instruct"):
+    def __init__(self, model_id="Qwen/Qwen3-4B-Instruct-2507"):
         self.model_id = model_id
         self.tokenizer = None
         self.model = None
